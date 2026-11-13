@@ -2,11 +2,13 @@ import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Clone, useGLTF, Stats } from '@react-three/drei';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
+
 import Background from './Background';
 import Grass from './Grass';
 import GrassTufts from './GrassTufts';
 import CameraController from './CameraController';
 import BoardTitle from './BoardTitle';
+import BoardName from './BoardName';
 import Tutorial from './Tutorial';
 import { startDeferredPreload3D, requestImmediatePreload3D, whenCase3DPreloaded } from './case3DAssets';
 import Prewarm3D from './Prewarm3D';
@@ -291,6 +293,7 @@ function Scene({ onOpenChatbot }) {
       </Suspense>
 
       <BoardTitle position={[0, 0, 0.9]} />
+      <BoardName position={[1, -3, 0.6]} />
 
       {/* La description (cube + cartes) n'apparaît qu'après le zoom face à la case.
           navigation par flèches : "transition" pilote la glisse hors champ /
