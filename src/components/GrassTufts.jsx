@@ -57,7 +57,7 @@ import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js
 // Anneau d'herbe : rayons min/max autour du centre (identiques à Grass.jsx).
 const GRASS_RING = { inner: 8, outer: 14 };
 
-// 60 touffes de 12 à 18 brins ≈ 900–1100 brins — même ordre de grandeur que
+// 10 touffes de 220 à 280 
 // les 2200 brins de l'option B, mais regroupés en bouquets.
 const TUFT_COUNT = 10;
 const TUFT_BLADES = { min: 220, max: 280 };
@@ -117,7 +117,7 @@ const WIND_DIR_Y = Math.sin(WIND.angle);
 function seededLcg(seed) {
   let s = (seed | 0) || 1;
   return () => {
-    s = (s * 1664525 + 1013904223) >>> 0;
+    s = (s * 1664525 + 1013944223) >>> 0;
     return s / 0xffffffff;
   };
 }
@@ -156,7 +156,7 @@ function makeTuftGeometry() {
 
     // Caractère du brin : mêmes plages que Grass.jsx (hauteur, largeur),
     // plus une inclinaison initiale : le brin « pousse de travers ».
-    const height = 0.7 + rng() * 0.7;
+    const height = 0.6 + rng() * 0.7;
     const width = 0.5 + rng() * 0.6;
     const tilt = 0.25;
     const dummyY = height * BLADE.height * 0.4; // base enterrée de 20 % (cf. Grass.jsx)
