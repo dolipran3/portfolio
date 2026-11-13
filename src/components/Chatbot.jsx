@@ -47,10 +47,10 @@ function Chatbot({ open: openProp, onToggle, introRequest, onIntroDone }) {
   const toggleOpen = onToggle ?? (() => setInternalOpen((value) => !value));
   // Clé locale = mode debug : appel direct à OpenAI sans passer par le
   // serveur. Vide (cas normal en production) ⇒ requêtes sur /api/chat.
-  const [apiKey, setApiKey] = useState(
+  const [apiKey] = useState(
     () => localStorage.getItem('openai_api_key') || ''
   );
-  const [model, setModel] = useState(
+  const [model] = useState(
     () => localStorage.getItem('openai_model') || DEFAULT_MODEL
   );
   const [messages, setMessages] = useState([
@@ -70,32 +70,32 @@ function Chatbot({ open: openProp, onToggle, introRequest, onIntroDone }) {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, loading, introTyping]);
 
-  const saveApiKey = (value) => {
-    setApiKey(value);
-    try {
-      if (value) {
-        localStorage.setItem('openai_api_key', value);
-      } else {
-        localStorage.removeItem('openai_api_key');
-      }
-    } catch {
-      // stockage indisponible : on garde la clé en mémoire pour la session
-    }
-  };
+  // const saveApiKey = (value) => {
+  //   setApiKey(value);
+  //   try {
+  //     if (value) {
+  //       localStorage.setItem('openai_api_key', value);
+  //     } else {
+  //       localStorage.removeItem('openai_api_key');
+  //     }
+  //   } catch {
+  //     // stockage indisponible : on garde la clé en mémoire pour la session
+  //   }
+  // };
 
-  const saveModel = (value) => {
-    setModel(value);
-    try {
-      localStorage.setItem('openai_model', value);
-    } catch {
-      // stockage indisponible : on garde le modèle en mémoire pour la session
-    }
-  };
+  // const saveModel = (value) => {
+  //   setModel(value);
+  //   try {
+  //     localStorage.setItem('openai_model', value);
+  //   } catch {
+  //     // stockage indisponible : on garde le modèle en mémoire pour la session
+  //   }
+  // };
 
-  const resetChat = () => {
-    setMessages([{ role: 'assistant', content: WELCOME_MESSAGE }]);
-    setError(null);
-  };
+  // const resetChat = () => {
+  //   setMessages([{ role: 'assistant', content: WELCOME_MESSAGE }]);
+  //   setError(null);
+  // };
 
   // Séquence d'intro : relancée à chaque incrémentation de `introRequest`
   // (clic sur la case Départ). Le discours de présentation remplace la
@@ -211,7 +211,7 @@ function Chatbot({ open: openProp, onToggle, introRequest, onIntroDone }) {
           <h1>Mon Assistant</h1>
         </header>
 
-        <div className="chatbot-settings">
+        {/* <div className="chatbot-settings">
           <label className="chatbot-label">
             Clé API (mode debug)
             <input
@@ -247,7 +247,7 @@ function Chatbot({ open: openProp, onToggle, introRequest, onIntroDone }) {
               Nouvelle conversation
             </button>
           </div>
-        </div>
+        </div> */}
 
         <div className="chatbot-messages">
           {messages.map((message, index) => (

@@ -41,8 +41,17 @@ await loadEnvFile(SERVER_DIR);
 // ---------------------------------------------------------------------------
 // Configuration
 // ---------------------------------------------------------------------------
+// Interrupteur du chatbot : CHATBOT_ENABLED=false dans server/.env (ou en
+// variable d'environnement) met le service hors ligne. Chaque message reçoit
+// alors une réponse d'indisponibilité, sans appel à l'API (aucun coût).
+const DISABLED_VALUES = new Set(['false', '0', 'no', 'off']);
+const isDisabled = (value) => DISABLED_VALUES.has((value ?? '').trim().toLowerCase());
+
+const CHATBOT_DISABLED_MESSAGE = "Désolé, cette fonctionnalité n'est pas disponible.";
+
 const CONFIG = {
   port: Number(process.env.PORT) || 8787,
+  chatbotEnabled: !isDisabled(process.env.CHATBOT_ENABLED),
   apiKey: process.env.OPENAI_API_KEY || '',
   model: process.env.OPENAI_MODEL || 'gpt-4.1',
   embeddingModel: process.env.OPENAI_EMBEDDING_MODEL || 'text-embedding-3-small',
@@ -245,6 +254,16 @@ async function readJsonBody(req, maxBytes = 20_000) {
 }
 
 async function handleChat(req, res) {
+  // Chatbot coupé : on répond poliment sans toucher au RAG ni à l'API.
+  // Statut 200 pour que le front l'affiche comme une bulle de conversation
+  // normale (et non comme une erreur).
+  if (!CONFIG.chatbotEnabled) {
+    log('chatbot désactivé — réponse d\'indisponibilité envoyée.');
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ reply: CHATBOT_DISABLED_MESSAGE, disabled: true }));
+    return;
+  }
+
   const body = await readJsonBody(req);
   const history = Array.isArray(body.messages) ? body.messages : [];
 
@@ -298,6 +317,7 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({
         status: 'ok',
+        chatbot: CONFIG.chatbotEnabled ? 'enabled' : 'disabled',
         rag: ragState.status,
         model: CONFIG.model,
       }));
@@ -324,8 +344,15 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-await initRag();
+if (CONFIG.chatbotEnabled) {
+  await initRag();
+} else {
+  ragState.status = 'disabled';
+  ragState.error = 'Chatbot désactivé (CHATBOT_ENABLED=false).';
+  log('Chatbot désactivé — RAG non initialisé.');
+}
 server.listen(CONFIG.port, () => {
   log(`Serveur démarré sur http://localhost:${CONFIG.port}`);
+  log(`Chatbot : ${CONFIG.chatbotEnabled ? 'activé ✓' : 'DÉSACTIVÉ — mets CHATBOT_ENABLED=true dans server/.env pour le réactiver'}`);
   log(`Clé API : ${CONFIG.apiKey ? 'présente ✓' : 'ABSENTE — renseigne OPENAI_API_KEY dans server/.env'}`);
 });

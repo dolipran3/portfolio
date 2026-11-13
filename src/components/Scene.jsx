@@ -293,7 +293,7 @@ function Scene({ onOpenChatbot }) {
       </Suspense>
 
       <BoardTitle position={[0, 0, 0.9]} />
-      <BoardName position={[1, -3, 0.6]} />
+      <BoardName position={[-1.2, -1.2, 0.6]} />
 
       {/* La description (cube + cartes) n'apparaît qu'après le zoom face à la case.
           navigation par flèches : "transition" pilote la glisse hors champ /
@@ -472,8 +472,6 @@ function Scene({ onOpenChatbot }) {
           - 'both'      → les deux superposés (mélange des deux échelles). */}
       {GRASS_MODE === 'instanced' || GRASS_MODE === 'both' ? <Grass /> : null}
       {GRASS_MODE === 'tufts' || GRASS_MODE === 'both' ? <GrassTufts /> : null}
-
-      <Stats className="stats" />
 
       {/* Bloom pour l'effet néon du texte « COMING SOON » (DescriptionComingSoon) :
           le texte émet une luminance très supérieure au reste de la scène, donc
