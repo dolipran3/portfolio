@@ -8,8 +8,8 @@ export default function DescriptionSentiment({ transition, caseRotation }) {
     <CaseDescription
       glbUrl={assets.glb}
       descriptionUrl={assets.description}
-      cube={{ position: [1.8, 1, 3], rotation: [Math.PI/2, 0, 0], scale: 0.9, spinAxis: 'y' }}
-      card={{ position: [-2.2, 2, -0.1], rotation: [Math.PI / 40, 0, -Math.PI] }}
+      cube={{ position: [0, -1.8, 3.3], rotation: [Math.PI/2, 0, 0], scale: 1.1, spinAxis: 'y' }}
+      card={{ position: [0, 1.9, -0.1], rotation: [0, -Math.PI / 40, Math.PI/2] }}
       transition={transition}
       caseRotation={caseRotation}
     />

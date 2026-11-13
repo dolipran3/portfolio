@@ -35,12 +35,12 @@ export function Loisir({ position, rotation = [0, 0, 0], view, onSelect}) {
         }}
     >
       <boxGeometry args={[3, 3, 1]} />
-      <meshStandardMaterial attach="material-0" color="green" roughness={0.8}/>
-      <meshStandardMaterial attach="material-1" color="green" roughness={0.8}/>
-      <meshStandardMaterial attach="material-2" color="green" roughness={0.8}/>
-      <meshStandardMaterial attach="material-3" color="green" roughness={0.8}/>
+      <meshStandardMaterial attach="material-0" color="#5a6ea7" roughness={0.8}/>
+      <meshStandardMaterial attach="material-1" color="#5a6ea7" roughness={0.8}/>
+      <meshStandardMaterial attach="material-2" color="#5a6ea7" roughness={0.8}/>
+      <meshStandardMaterial attach="material-3" color="#5a6ea7" roughness={0.8}/>
       <meshStandardMaterial attach="material-4" map={loisirTexture} roughness={0.8}/>
-      <meshStandardMaterial attach="material-5" color="green" roughness={0.8}/>
+      <meshStandardMaterial attach="material-5" color="#5a6ea7" roughness={0.8}/>
     </mesh>
   );
 }

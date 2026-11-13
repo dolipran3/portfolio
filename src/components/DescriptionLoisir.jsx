@@ -7,7 +7,7 @@ export default function DescriptionLoisir({ transition, caseRotation }) {
   return (
     <CaseDescription
       descriptionUrl={assets.description}
-      card={{ position: [0.4, 1, -0.1], rotation: [0, -Math.PI / 40, Math.PI/2], dimensions: [3.5, 0.1, 2.2] }}
+      card={{ position: [-1, 2.9, -0.1], rotation: [Math.PI / 40, 0, Math.PI], dimensions: [3.5, 0.1, 2.2] }}
       transition={transition}
       caseRotation={caseRotation}
     />

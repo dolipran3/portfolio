@@ -8,8 +8,8 @@ export default function DescriptionVoxBridge({ transition, caseRotation }) {
     <CaseDescription
       glbUrl={assets.glb}
       descriptionUrl={assets.description}
-      cube={{ position: [1.8, 0, 3], rotation: [Math.PI/2, 0, 0], scale: 0.9, spinAxis: 'y' }}
-      card={{ position: [-2.2, 2, -0.1], rotation: [Math.PI / 40, 0, -Math.PI] }}
+      cube={{ position: [1.6, 0, 3.3], rotation: [Math.PI/2, 0, 0], scale: 1.2, spinAxis: 'y' }}
+      card={{ position: [-2.2, 0, -0.1], rotation: [-Math.PI / 40, 0, 0] }}
       transition={transition}
       caseRotation={caseRotation}
     />

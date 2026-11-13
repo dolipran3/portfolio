@@ -41,6 +41,7 @@ import { GithubCase } from './case/GithubCase';
 import { CvCase } from './case/CvCase';
 import { LinkdinCase } from './case/LinkdinCase';
 import { ComingSoonCase } from './case/ComingSoon';
+import Plateau from './case/Plateau';
 
 
 // Destinations des cases de coin, ouvertes à la fin du zoom caméra. La case
@@ -66,18 +67,18 @@ const GRASS_MODE = 'tufts'; // 'instanced' | 'tufts' | 'both'
 // flèche gauche = case précédente, en boucle. Les cases de coin n'y
 // figurent pas : les flèches ne permettent jamais d'y aller.
 const RING_OF_CASES = [
-  { position: [-3, -6, 0.5], rotation: [0, 0, 0], type: 'worximity' },
-  { position: [0, -6, 0.5], rotation: [0, 0, 0], type: 'parcoursPro' },
+  { position: [-3, -6, 0.5], rotation: [0, 0, 0], type: 'voxBridge' },
+  { position: [0, -6, 0.5], rotation: [0, 0, 0], type: 'v1Portfolio' },
   { position: [3, -6, 0.5], rotation: [0, 0, 0], type: 'flappy-ia' },
-  { position: [6, -3, 0.5], rotation: [0, 0, Math.PI / 2], type: 'v1Portfolio' },
+  { position: [6, -3, 0.5], rotation: [0, 0, Math.PI / 2], type: 'curation' },
   { position: [6, 0, 0.5], rotation: [0, 0, Math.PI / 2], type: 'memory' },
-  { position: [6, 3, 0.5], rotation: [0, 0, Math.PI / 2], type: 'loisir' },
-  { position: [3, 6, 0.5], rotation: [0, 0, Math.PI], type: 'voxBridge' },
-  { position: [0, 6, 0.5], rotation: [0, 0, Math.PI], type: 'sentiment' },
-  { position: [-3, 6, 0.5], rotation: [0, 0, Math.PI], type: 'benevolat' },
-  { position: [-6, 3, 0.5], rotation: [0, 0, -Math.PI / 2], type: 'comingSoon' },
+  { position: [6, 3, 0.5], rotation: [0, 0, Math.PI / 2], type: 'sentiment' },
+  { position: [3, 6, 0.5], rotation: [0, 0, Math.PI], type: 'worximity' },
+  { position: [0, 6, 0.5], rotation: [0, 0, Math.PI], type: 'comingSoon' },
+  { position: [-3, 6, 0.5], rotation: [0, 0, Math.PI], type: 'loisir' },
+  { position: [-6, 3, 0.5], rotation: [0, 0, -Math.PI / 2], type: 'parcoursPro' },
   { position: [-6, 0, 0.5], rotation: [0, 0, -Math.PI / 2], type: 'parcoursScolaire' },
-  { position: [-6, -3, 0.5], rotation: [0, 0, -Math.PI / 2], type: 'curation' },
+  { position: [-6, -3, 0.5], rotation: [0, 0, -Math.PI / 2], type: 'benevolat' },
 ];
 
 // Les arbres autour du plateau : un clone indépendant par instance
@@ -100,6 +101,10 @@ function Trees() {
   );
 }
 
+// Le plateau central est défini dans case/Plateau.jsx : la texture du centre
+// y est chargée via useTexture, qui doit être appelée depuis un composant
+// rendu À L'INTÉRIEUR du <Canvas> et qui suspend pendant le chargement, d'où
+// le Suspense côté scène.
 function Scene({ onOpenChatbot }) {
 
   const [view, setView] = useState('initial'); // 'initial', 'top' ou 'case'
@@ -279,12 +284,11 @@ function Scene({ onOpenChatbot }) {
         onOpenChatbot={onOpenChatbot} />
 
       <Background onClick={handleBackgroundClick} />
+      
 
-      <mesh position={[0, 0, 0.5]} castShadow receiveShadow
-        onClick={handleBackgroundClick}>
-        <boxGeometry args={[9, 9, 0.8]} />
-        <meshStandardMaterial color="#e9e9e9"  roughness={0.8} />
-      </mesh>
+      <Suspense fallback={null}>
+        <Plateau onClick={handleBackgroundClick} />
+      </Suspense>
 
       <BoardTitle position={[0, 0, 0.9]} />
 

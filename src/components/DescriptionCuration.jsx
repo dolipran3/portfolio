@@ -8,8 +8,8 @@ export default function DescriptionCuration({ transition, caseRotation }) {
     <CaseDescription
       glbUrl={assets.glb}
       descriptionUrl={assets.description}
-      cube={{ position: [-2, 1.2, 3.4], rotation: [Math.PI/2, 0, 0], scale: 0.7, spinAxis: 'y' }}
-      card={{ position: [-2, 0, -0.1], rotation: [0, Math.PI / 40, -Math.PI/2] }}
+      cube={{ position: [0, 1.8, 3.4], rotation: [Math.PI/2, 0, 0], scale: 1.1, spinAxis: 'y' }}
+      card={{ position: [0, 0, -0.1], rotation: [0, -Math.PI / 40, Math.PI/2] }}
       transition={transition}
       caseRotation={caseRotation}
     />

@@ -8,8 +8,8 @@ export default function DescriptionWorximity({ transition, caseRotation }) {
     <CaseDescription
       glbUrl={assets.glb}
       descriptionUrl={assets.description}
-      cube={{ position: [-2, 0, 3.2], rotation: [Math.PI / 2, 0, 0], scale: 1, spinAxis: 'y' }}
-      card={{ position: [0, 0, -0.1], rotation: [-Math.PI / 40, 0, 0] }}
+      cube={{ position: [-1.9, 0, 3.2], rotation: [Math.PI / 2, 0, 0], scale: 1, spinAxis: 'y' }}
+      card={{ position: [0, 1.9, -0.1], rotation: [Math.PI / 40, 0, Math.PI] }}
       transition={transition}
       caseRotation={caseRotation}
     />

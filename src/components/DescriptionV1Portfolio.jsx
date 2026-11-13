@@ -8,8 +8,8 @@ export default function DescriptionV1Portfolio({ transition, caseRotation }) {
     <CaseDescription
       glbUrl={assets.glb}
       descriptionUrl={assets.description}
-      cube={{ position: [0, 2.2, 3], rotation: [0, 0, -Math.PI/2], scale: 0.9, spinAxis: 'x' }}
-      card={{ position: [0, 0, -0.1], rotation: [0, -Math.PI / 40, Math.PI/2] }}
+      cube={{ position: [-2.2, 0, 3], rotation: [ Math.PI , 0, 0], scale: 0.9, spinAxis: 'y' }}
+      card={{ position: [0, 0, -0.1], rotation: [-Math.PI / 40, 0, 0] }}
       transition={transition}
       caseRotation={caseRotation}
     />
