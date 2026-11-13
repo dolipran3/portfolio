@@ -4,6 +4,9 @@
   left: 0;
   width: 100vw;
   height: 100vh;
+  /* dvh : suit la hauteur réelle sur mobile (barres d'adresse dynamiques),
+     le centrage vertical des flèches reste donc exact. */
+  height: 100dvh;
   z-index: 40; /* au-dessus du canevas (z = 0), sous le chatbot (z = 50) */
   pointer-events: none;
 }
@@ -15,19 +18,27 @@
 
 .overlay-nav-arrow {
   position: absolute;
+  /* Centrage vertical relatif (50 % - moitié) : reste exact quel que soit
+     le redimensionnement de la fenêtre. */
   top: 50%;
   transform: translateY(-50%);
-  width: 44px;
-  height: 96px;
-  border: none;
+  /* Flexbox pour centrer le glyphe optiquement, au lieu d'un line-height
+     calé sur une hauteur en pixels. */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  box-sizing: border-box; /* les bordures ne décalent plus le centrage */
+  width: var(--ui-arrow-w);
+  height: var(--ui-arrow-h);
+  border: 2px solid rgba(232, 197, 2, 0.6);
   border-radius: 10px;
   background: rgba(13, 27, 42, 0.88);
   backdrop-filter: blur(6px);
-  border: 2px solid rgba(232, 197, 2, 0.6);
   color: #ffcc00;
-  font-size: 34px;
+  font-size: var(--ui-arrow-font);
   font-weight: 700;
-  line-height: 96px;
+  line-height: 1;
   cursor: pointer;
   pointer-events: auto;
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.35);
@@ -42,11 +53,13 @@
 }
 
 .overlay-nav-left {
-  left: 44px; /* décalée pour ne pas chevaucher le bouton du chatbot */
+  /* Décalée pour ne pas chevaucher l'onglet du chatbot (fermé), collé au
+     bord gauche : on garde une marge --ui-edge après l'onglet. */
+  left: calc(var(--ui-tab-w) + var(--ui-edge));
 }
 
 .overlay-nav-right {
-  right: 16px;
+  right: var(--ui-edge);
 }
 
 @keyframes overlay-nav-pop {
@@ -60,11 +73,5 @@
   }
 }
 
-@media (max-width: 600px) {
-  .overlay-nav-arrow {
-    width: 36px;
-    height: 72px;
-    font-size: 26px;
-    line-height: 72px;
-  }
-}
+/* clamp() dans --ui-arrow-* (index.css) adapte déjà flèches et marges :
+   plus besoin de tailles fixes séparées pour les petits écrans. */

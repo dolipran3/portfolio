@@ -58,13 +58,14 @@
 .tutorial-label {
   display: inline-block;
   max-width: 60vw;
-  padding: 7px 14px;
+  /* Tailles multipliées par --ui-scale : lisibles sur grand écran. */
+  padding: calc(7px * var(--ui-scale)) calc(14px * var(--ui-scale));
   border-radius: 999px;
   background: rgba(13, 27, 42, 0.88);
-  border: 2px solid rgba(232, 197, 2, 0.6);
+  border: calc(2px * var(--ui-scale)) solid rgba(232, 197, 2, 0.6);
   color: #ffcc00;
   font-family: 'Semplicita', sans-serif;
-  font-size: 15px;
+  font-size: calc(15px * var(--ui-scale));
   white-space: nowrap;
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.35);
 }
@@ -82,8 +83,8 @@
    de projet). */
 
 .tutorial-arrow {
-  width: 40px;
-  height: 40px;
+  width: calc(40px * var(--ui-scale));
+  height: calc(40px * var(--ui-scale));
   stroke: #ffcc00;
   filter: drop-shadow(2px 3px 6px rgba(0, 0, 0, 0.45));
 }
@@ -141,10 +142,11 @@
   transform: translate(-50%, 0);
 }
 
-/* Colle la flèche latérale droite (.overlay-nav-right : right 16px), en
-   glissant vers elle depuis la gauche. */
+/* Colle la flèche latérale droite (.overlay-nav-right) en gardant la même
+   marge de 36px max entre les deux, recalculée avec les variables : la
+   position suit le redimensionnement de la flèche. */
 .hint-nav {
-  right: 96px;
+  right: calc(var(--ui-edge) + var(--ui-arrow-w) + clamp(24px, 2.6vw, 36px));
   top: 50%;
   transform: translate(0, -140%);
   flex-direction: row;
@@ -154,10 +156,6 @@
 
 @media (max-width: 600px) {
   .tutorial-label {
-    font-size: 13px;
-  }
-
-  .hint-nav {
-    right: 78px;
+    font-size: calc(13px * var(--ui-scale));
   }
 }
