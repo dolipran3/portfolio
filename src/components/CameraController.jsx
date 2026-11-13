@@ -4,7 +4,10 @@ import { gsap } from 'gsap';
 import * as THREE from 'three';
 import { setCameraBusy } from './case3DAssets';
 
-// Positions clés de la caméra (valeurs de départ)
+// Positions clés de la caméra (valeurs de départ). INITIAL_POSITION est la
+// position de base face au plateau, AVANT toute rotation : quand la caméra
+// est tournée, la vue initiale est cette position pivôtée d'autant autour de
+// l'axe vertical Z (cf. returnToInitial).
 const INITIAL_POSITION = { px: 0, py: -25, pz: 25 };
 const TOP_POSITION = { px: 0, py: 0, pz: 20 };
 // Point que la caméra regarde (le centre de la scène)
@@ -156,6 +159,10 @@ const CameraController = forwardRef(function CameraController({ setView, focused
 
   // Passage de la vue "initiale" à la vue "du dessus" : la caméra monte
   // au-dessus de la scène. Déclenché par un clic sur le plateau ou une case.
+  // Mouvement exactement inverse de la descente (returnToInitial) : la
+  // caméra remonte en ligne droite vers la verticale pendant que le "up"
+  // bascule du plan de la rotation vers sa cible, sans toucher au roulis —
+  // l'orientation du plateau à l'écran reste stable du début à la fin.
   const goToTop = useCallback(() => {
     if (currentTween.current) currentTween.current.kill();
     quatOverride.current = null;
@@ -165,81 +172,136 @@ const CameraController = forwardRef(function CameraController({ setView, focused
 
     const alreadyTop = view === 'top';
 
-    // 1) La caméra monte au-dessus de la scène.
+    // Rotation mémorisée (normalisée sur (−π, π], cf. returnToInitial) :
+    // en vue initiale elle est portée par la position pivôtée de la caméra,
+    // la montée la réexprime en roulis à l'arrivée (voir onComplete).
+    upAngleProxy.current.z = THREE.MathUtils.euclideanModulo(
+      upAngleProxy.current.z + Math.PI, TWO_PI) - Math.PI;
+    const angle = upAngleProxy.current.z;
+    const hasRotation = Math.abs(angle) > 0.001;
+    targetAngleRef.current = angle;
+
+    // Durées synchronisées en présence de rotation (l'orientation du
+    // plateau doit rester exactement stable pendant la montée) ; sinon on
+    // garde le rythme d'origine.
+    const moveDuration = hasRotation && !alreadyTop ? 0.35 : 0.2;
+    const upDuration = hasRotation && !alreadyTop ? 0.35 : 0.4;
+
+    // 1) La caméra monte au-dessus de la scène. Avec rotation : même easing
+    //    que le tween du "up" pour que les deux progressions restent
+    //    synchronisées (l'orientation du plateau doit rester stable).
     tl.to(proxy.current, {
       ...TOP_POSITION,
       ...CENTER_TARGET,
-      duration: 0.2,
+      duration: moveDuration,
+      ...(hasRotation && !alreadyTop ? { ease: 'power2.inOut' } : {}),
     }, 0);
 
-    // 2) On redresse l'orientation de la caméra (up = +Y), sauf si on était
-    //    déjà en vue du dessus : dans ce cas on garde la rotation actuelle.
+    // 2) On bascule le "up" du plan de la rotation vers sa cible, sauf si on
+    //    était déjà en vue du dessus : dans ce cas on garde la rotation.
     if (!alreadyTop) {
       tl.to(upProxy.current, {
-        x: 0, y: 1, z: 0,
-        duration: 0.4,
-        ease: 'power2.out',
+        x: -Math.sin(angle), y: Math.cos(angle), z: 0,
+        duration: upDuration,
+        ease: 'power2.inOut',
         overwrite: 'auto',
       }, 0);
-      tl.to(upAngleProxy.current, {
-        z: 0,
-        duration: 0.4,
-        ease: 'power2.out',
-        overwrite: 'auto',
-        onUpdate: syncRollFromAngle,
-        onComplete: syncRollFromAngle,
-      }, 0);
-      targetAngleRef.current = 0;
     }
 
-    // 3) La vue "top" n'est activée qu'une fois l'animation terminée.
-    tl.eventCallback('onComplete', () => setView('top'));
+    // 3) La vue "top" n'est activée qu'une fois l'animation terminée. La
+    //    caméra est alors à la verticale : bascule de représentation
+    //    invisible (up (−sinθ, cosθ, 0) sans roulis ≡ up (0,1,0) avec le
+    //    roulis θ) pour retrouver le pipeline standard de la vue top.
+    tl.eventCallback('onComplete', () => {
+      if (!alreadyTop) {
+        upProxy.current.x = 0;
+        upProxy.current.y = 1;
+        upProxy.current.z = 0;
+        proxy.current.roll = angle;
+      }
+      setView('top');
+    });
   }, [setView, view]);
 
   // Retour de la vue "du dessus" à la vue "initiale" : la caméra redescend
   // face au plateau. Déclenché par un clic sur le fond ou le centre du plateau.
+  // La rotation n'est ni déroulée ni animée : elle est reportée sur la
+  // géométrie du mouvement. La descente est la copie exacte de la descente
+  // "sans rotation", rigidement pivôtée d'un angle θ autour de l'axe
+  // vertical Z : la caméra glisse en ligne droite vers la position initiale
+  // pivôtée (ex. π/2 => (25, 0, 25)) pendant que le "up" rejoint +Z, le
+  // roulis valant 0 sur toute la durée. Le plateau garde ainsi exactement
+  // la même orientation à l'écran du début à la fin, sans le moindre salto.
   const returnToInitial = useCallback(() => {
     if (currentTween.current) currentTween.current.kill();
     quatOverride.current = null;
     setView('initial');
 
-    const currentAngle = upAngleProxy.current.z;
-    const hasRotation = Math.abs(currentAngle) > 0.001;
+    // Rotation courante, normalisée sur (−π, π] : la valeur interne peut
+    // avoir accumulé plusieurs tours de molette, or seule sa valeur mod 2π
+    // a un effet visuel — la renormalisation est invisible et évite les
+    // spins à répétition dans les tweens.
+    upAngleProxy.current.z = THREE.MathUtils.euclideanModulo(
+      upAngleProxy.current.z + Math.PI, TWO_PI) - Math.PI;
+    const angle = upAngleProxy.current.z;
+    const hasRotation = Math.abs(angle) > 0.001;
+    const cos = Math.cos(angle);
+    const sin = Math.sin(angle);
+    // Position initiale de base pivôtée d'un angle θ autour de Z :
+    // ex. (0, -25, 25) avec une rotation de π/2 donne (25, 0, 25).
+    const rotatedPx = INITIAL_POSITION.px * cos - INITIAL_POSITION.py * sin;
+    const rotatedPy = INITIAL_POSITION.px * sin + INITIAL_POSITION.py * cos;
 
-    // 1) On déplie d'abord la rotation sur place si la caméra est tournée.
-    const rotDuration = hasRotation
-      ? Math.min(Math.abs(currentAngle) / Math.PI, 1) * 0.55
-      : 0;
+    // La rotation reste mémorisée (upAngleProxy / targetAngleRef) : la
+    // montée vers la vue du dessus la réexprimera en roulis (goToTop).
+    targetAngleRef.current = angle;
+
     const tl = gsap.timeline();
     currentTween.current = tl;
 
+    // Étape 1 (uniquement s'il y a une rotation) : bascule de représentation
+    // invisible à l'écran — en pose de dessus, un roulis θ avec up (0,1,0)
+    // équivaut PILE à un up (−sinθ, cosθ, 0) sans roulis. Le "up" suit l'ARC
+    // (rotation autour de Z) et non la corde : un lerp vectoriel ferait
+    // dévier sa direction de façon non linéaire (et passerait par le vecteur
+    // nul à θ = π), ce qui faisait vibrer l'image au lieu de la laisser
+    // immobile. Un seul tween de progression pilote up + roulis : la
+    // compensation est donc exacte à chaque frame.
+    const switchAt = hasRotation ? 0.1 : 0;
     if (hasRotation) {
-      tl.to(upAngleProxy.current, {
-        z: 0,
-        duration: rotDuration,
+      const switchState = { p: 0 };
+      tl.to(switchState, {
+        p: 1,
+        duration: switchAt,
         ease: 'power2.inOut',
-        overwrite: 'auto',
-        onUpdate: syncRollFromAngle,
-        onComplete: syncRollFromAngle,
+        onUpdate: () => {
+          const p = switchState.p;
+          upProxy.current.x = -Math.sin(angle * p);
+          upProxy.current.y = Math.cos(angle * p);
+          upProxy.current.z = 0;
+          proxy.current.roll = angle * (1 - p);
+        },
       }, 0);
     }
 
-    // 2) Puis la caméra retourne à sa position initiale en bas, et on
-    //    bascule le "up" vers +Z (orientation par défaut).
+    // Étape 2 : descente — la caméra glisse en ligne droite vers la position
+    // initiale pivôtée pendant que le "up" rejoint +Z (mêmes durée et easing
+    // pour que la compensation reste exacte en permanence). À l'arrivée, la
+    // rotation est entièrement portée par la position pivôtée de la caméra.
     tl.to(proxy.current, {
-      ...INITIAL_POSITION,
+      px: rotatedPx,
+      py: rotatedPy,
+      pz: INITIAL_POSITION.pz,
       ...CENTER_TARGET,
       duration: 0.35,
       ease: 'power2.inOut',
-    }, rotDuration);
+    }, switchAt);
     tl.to(upProxy.current, {
       x: 0, y: 0, z: 1,
       duration: 0.35,
       ease: 'power2.inOut',
       overwrite: 'auto',
-    }, rotDuration);
-
-    targetAngleRef.current = 0;
+    }, switchAt);
   }, [setView]);
 
   // Applique le proxy à la caméra à chaque frame rendue.
