@@ -1,0 +1,9 @@
+# Autorise tous les moteurs de recherche à tout indexer
+User-agent: *
+Allow: /
+
+# Ne pas indexer les assets lourds (inutile et pollution de l'index)
+Disallow: /draco/
+
+# Emplacement du sitemap
+Sitemap: https://www.baptiste-le-bail.fr/sitemap.xml
