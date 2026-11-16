@@ -5,7 +5,7 @@ import CameraController from './CameraController';
 import BoardTitle from './BoardTitle';
 import BoardName from './BoardName';
 import Tutorial from './Tutorial';
-import { startDeferredPreload3D, requestImmediatePreload3D, whenCase3DPreloaded } from './case3DAssets';
+import { requestImmediatePreload3D, whenCase3DPreloaded } from './case3DAssets';
 import Prewarm3D from './Prewarm3D';
 
 import DescriptionFlappyIa from './DescriptionFlappyIa';
@@ -137,11 +137,10 @@ function Scene({ onOpenChatbot }) {
     };
   }, []);
 
-  // Préchargement des modèles 3D en arrière-plan (un par un, du plus léger au
-  // plus lourd) une fois la scène reposée, en complément du survol des cases.
-  useEffect(() => {
-    startDeferredPreload3D();
-  }, []);
+  // Le préchargement d'arrière-plan des modèles 3D (startDeferredPreload3D)
+  // est déclenché par l'écran de chargement une fois terminé (App.jsx) :
+  // les gros GLB ne doivent pas rallonger la barre de progression, qui ne
+  // couvre que le plateau, les cases et leurs textures.
 
   const handleSelect = useCallback((caseData) => {
     // Déjà en vue "case" : on revient à la vue du dessus au lieu de

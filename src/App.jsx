@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import Scene from './components/Scene';
 import Chatbot from './components/Chatbot';
+import LoadingScreen from './components/LoadingScreen';
+import { startDeferredPreload3D } from './components/case3DAssets';
 
 function App() {
   const [chatbotOpen, setChatbotOpen] = useState(false);
@@ -18,6 +20,7 @@ function App() {
   return (
     <>
       <Scene onOpenChatbot={openChatbotWithIntro} />
+      <LoadingScreen onLoadingDone={startDeferredPreload3D} />
       <Chatbot
         open={chatbotOpen}
         onToggle={() => setChatbotOpen((v) => !v)}

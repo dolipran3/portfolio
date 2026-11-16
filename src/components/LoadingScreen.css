@@ -1,0 +1,63 @@
+/* Écran de chargement (LoadingScreen.jsx) : overlay plein écran au-dessus de
+   tout le reste (flèches z = 40, tutoriel z = 45, chatbot z = 50). Le fond
+   reprend celui du canevas (#180900, cf. Scene.jsx) pour que la révélation de
+   l'écran soit invisible : le logo passe du noir & blanc à la couleur pendant
+   que la scène se charge derrière. */
+
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #180900;
+  opacity: 1;
+  transition: opacity 0.7s ease;
+}
+
+/* Fondu de sortie : l'écran devient transparent et non cliquable, la scène
+   est déjà interactive derrière pendant le fondu. */
+.loading-screen--fading {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loading-screen__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(clamp(12px, 2vh, 24px) * var(--ui-scale));
+}
+
+/* Les deux images sont superposées et occupent la même boîte : la version
+   noir & blanc en fond, la version couleur au-dessus, révélée de gauche à
+   droite via clip-path. --loading-progress est écrit en pourcentage par le
+   composant à chaque frame. */
+.loading-screen__logo {
+  position: relative;
+  width: clamp(280px, 44vw, 560px);
+  user-select: none;
+}
+
+.loading-screen__logo img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.loading-screen__logo-color {
+  position: absolute;
+  inset: 0;
+  clip-path: inset(0 calc(100% - var(--loading-progress, 0%)) 0 0);
+}
+
+.loading-screen__percent {
+  margin: 0;
+  /* Même police que le chatbot / le reste de l'interface (Chatbot.css). */
+  font-family: 'Semplicita', sans-serif;
+  color: #ffffff;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  font-size: calc(clamp(16px, 1.6vw, 24px) * var(--ui-scale));
+}
