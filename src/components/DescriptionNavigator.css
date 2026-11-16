@@ -33,7 +33,7 @@
   height: var(--ui-arrow-h);
   border: 2px solid rgba(232, 197, 2, 0.6);
   border-radius: 10px;
-  background: rgba(13, 27, 42, 0.88);
+  background: rgba(13, 27, 42, 0.3);
   backdrop-filter: blur(6px);
   color: #ffcc00;
   font-size: var(--ui-arrow-font);
@@ -45,6 +45,7 @@
   transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
   /* apparition synchronisée avec la carte de description */
   animation: overlay-nav-pop 0.35s ease backwards;
+  /* opacity: 0.5; */
 }
 
 .overlay-nav-arrow:hover {

@@ -24,6 +24,29 @@ export const CASE_3D_ASSETS = {
   // curation: { glb: '/curation-draco.glb', description: '/descriptionCuration.webp' },
 };
 
+export const BILLET = {
+  '1':{texture: '/b1p.webp', color: '#fefefe'},
+  '5':{texture: 'b5p.webp', color: '#fddcc3'},
+  '10':{texture: 'b10p.webp', color: '#bbe6f1'},
+  '20':{texture: 'b20p.webp', color: '#eff5e1'},
+  '50':{texture: 'b50p.webp', color: '#b99ecd'},
+  '100':{texture: 'b100p.webp', color: '#fdebc3'},
+  '500':{texture: 'b500p.webp', color: '#fccb78'},
+  'avenueFlappyIa' :{texture: 'avenueFlappyIa.webp', color: '#ffffff'},
+  'avenueV1Portfolio' :{texture: 'avenueV1Portfolio.webp', color: '#ffffff'},
+  'avenueVoxBridge' :{texture: 'avenueVoxBridge.webp', color: '#ffffff'},
+  'avenueCuration' :{texture: 'avenueCuration.webp', color: '#ffffff'},
+  'avenueBenevolat' :{texture: 'avenueBenevolat.webp', color: '#ffffff'},
+  'prisonGithub' :{texture: 'prisonGithub.webp', color: '#ffffff'},
+  'caisseCommunaute' :{texture: 'caisseCommunaute.webp', color: '#ffffff'},
+  'chance' :{texture: 'chance.webp', color: '#ffffff'},
+};
+
+export const MODELE3D = {
+  'ship': {glb: '/ship.glb'},
+  'car': {glb: '/car.glb'},
+}
+
 // Les GLB sont compressés en Draco (décodage géométrie dans des Web Workers
 // de DRACOLoader → plus de parsing lourd sur le main thread). Three est livré
 // avec les décodeurs : on les sert depuis public/draco plutôt que depuis le

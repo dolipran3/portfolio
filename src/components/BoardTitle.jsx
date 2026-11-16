@@ -23,7 +23,7 @@ function BoardTitle({ position }) {
           receiveShadow
         >
           PORTFOLIO
-          <meshStandardMaterial color="white" roughness={0.3} metalness={0.2} />
+          <meshStandardMaterial color="white" roughness={0.9} metalness={0.2} />
         </Text3D>
       </Center>
     </group>

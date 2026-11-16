@@ -6,10 +6,10 @@ export function SwapCards({ textureUrl, position = [0, 0, -0.1], rotation = [0, 
   return (
     <mesh position={position} rotation={rotation} castShadow receiveShadow>
       <boxGeometry args={dimensions} />
-      <meshStandardMaterial attach="material-0" roughness={1}/>
+      <meshBasicMaterial attach="material-0" roughness={1}/>
       <meshStandardMaterial attach="material-1" roughness={1}/>
       <meshStandardMaterial attach="material-2" roughness={1}/>
-      <meshStandardMaterial attach="material-3" map={description} roughness={1}/>
+      <meshBasicMaterial attach="material-3" map={description} roughness={1}/>
       <meshStandardMaterial attach="material-4" roughness={1}/>
       <meshStandardMaterial attach="material-5" roughness={1}/>
     </mesh>

@@ -19,7 +19,8 @@ function BoardName({ position }) {
           receiveShadow
         >
           BAPTISTE LE BAIL
-          <meshStandardMaterial color="#cbcbcb" roughness={0.8} metalness={0.2} />
+          <meshStandardMaterial color="#757575" roughness={0.8} metalness={0.2} />
+          {/* #cbcbcb */}
         </Text3D>
       </Center>
     </group>

@@ -1,11 +1,6 @@
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { Clone, useGLTF, Stats } from '@react-three/drei';
-import { EffectComposer, Bloom } from '@react-three/postprocessing';
-
 import Background from './Background';
-import Grass from './Grass';
-import GrassTufts from './GrassTufts';
 import CameraController from './CameraController';
 import BoardTitle from './BoardTitle';
 import BoardName from './BoardName';
@@ -45,6 +40,27 @@ import { LinkdinCase } from './case/LinkdinCase';
 import { ComingSoonCase } from './case/ComingSoon';
 import Plateau from './case/Plateau';
 
+import Ship from './3DUnique/Ship';
+import Car from './3DUnique/Car';
+
+import B1 from './billets/B1'
+import B5 from './billets/B5'
+import B10 from './billets/B10'
+import B20 from './billets/B20'
+import B50 from './billets/B50'
+import B100 from './billets/B100'
+import B500 from './billets/B500'
+
+import AvenueFlappyIa from './billets/AvenueFlappyIa';
+import AvenueV1Portfolio from './billets/AvenueV1Portfolio';
+import AvenueVoxBrige from './billets/AvenueVoxBridge';
+import AvenueCuration from './billets/AvenueCuration';
+import AvenueBenevolat from './billets/AvenueBenevolat';
+import PrisonGithub from './billets/PrisonGithub';
+import CaisseCommunaute from './billets/CaisseCommunaute';
+import Chance from './billets/Chance';
+
+
 
 // Destinations des cases de coin, ouvertes à la fin du zoom caméra. La case
 // Départ n'a pas d'URL : elle ouvre le chatbot (présentation personnelle,
@@ -60,9 +76,6 @@ const CV_URL = '/BaptisteLeBailCv.pdf';
 const SLIDE_EXIT_DURATION = 0.55;
 // const SLIDE_ENTER_DURATION = 0.5;
 // const NAV_CAMERA_DURATION = 1.4;
-
-// Commutateur d'herbe : quelle approche afficher (cf. le bloc <Canvas>).
-const GRASS_MODE = 'tufts'; // 'instanced' | 'tufts' | 'both'
 
 // Les 12 cases navigables (toutes sauf les 4 cases de coin) dans l'ordre
 // où elles se suivent autour du plateau : flèche droite = case suivante,
@@ -83,24 +96,16 @@ const RING_OF_CASES = [
   { position: [-6, -3, 0.5], rotation: [0, 0, -Math.PI / 2], type: 'benevolat' },
 ];
 
-// Les arbres autour du plateau : un clone indépendant par instance
-// (un Object3D ne peut avoir qu'un parent), géométries et matériaux partagés.
-// <Clone> propage castShadow / receiveShadow aux meshes enfants.
-// useGLTF suspend tant que le GLB n'est pas chargé, d'où le Suspense côté scène.
-function Trees() {
-  const { scene } = useGLTF('/arbre_low_poly.glb');
-  return (
-    <>
-      <Clone object={scene} position={[10, 0, 0]} rotation={[Math.PI/2, 0, 0]} scale={[0.5, 0.5, 0.5]} castShadow />
-      <Clone object={scene} position={[15, 3, 0]} rotation={[Math.PI/2, Math.PI/2, 0]} scale={[0.5, 0.5, 0.5]} castShadow />
-      <Clone object={scene} position={[-14, 6, 0]} rotation={[Math.PI/2, 0, 0]} scale={[0.5, 0.5, 0.5]} castShadow />
-      <Clone object={scene} position={[-13, -3, 0]} rotation={[Math.PI/2, -Math.PI/8, 0]} scale={[0.5, 0.5, 0.5]} castShadow />
-      <Clone object={scene} position={[-16, 5, 0]} rotation={[Math.PI/2, Math.PI/4, 0]} scale={[0.5, 0.5, 0.5]} castShadow />
-      <Clone object={scene} position={[0, 10, 0]} rotation={[Math.PI/2, 0, 0]} scale={[0.5, 0.5, 0.5]} castShadow />
-      <Clone object={scene} position={[0, -12, 0]} rotation={[Math.PI/2, 0, 0]} scale={[0.5, 0.5, 0.5]} castShadow />
-      <Clone object={scene} position={[3, -15, 0]} rotation={[Math.PI/2, 0, 0]} scale={[0.5, 0.5, 0.5]} castShadow />
-    </>
-  );
+function LightWithHelper() {
+  // const ref = useRef();
+  // useHelper(ref, SpotLightHelper, 1, 'red'); // Taille: 1, Couleur: rouge
+  return <spotLight 
+        // ref={ref}
+        position={[0, -1, 15]} 
+        intensity={600}
+        penumbra={0.18}
+        castShadow={true}
+      />;
 }
 
 // Le plateau central est défini dans case/Plateau.jsx : la texture du centre
@@ -245,10 +250,11 @@ function Scene({ onOpenChatbot }) {
       // DPR plafonné à 1.5 : par défaut r3f rend au DPR natif (2 sur écran
       // Retina = 4× plus de pixels par frame, fill rate très lourd).
       dpr={[1, 1.5]}
+      // 219ebc
       style={{ 
         width: '100vw', 
         height: '100vh', 
-        background: '#219ebc', 
+        background: '#180900', 
         position: 'absolute', 
         top: 0, 
         left: 0 
@@ -265,15 +271,19 @@ function Scene({ onOpenChatbot }) {
       <Prewarm3D />
 
       {/* Lumières */}
+      {/* Math.PI / 2 */}
 
-      <ambientLight intensity={Math.PI / 2} />
+      <ambientLight intensity={0.8} />
+      
 
-      <pointLight 
+      {/* <pointLight 
         position={[10, 10, 10]} 
-        decay={0} 
-        intensity={Math.PI} 
+        decay={0.2} 
+        intensity={5} 
         castShadow={true}
-      />
+        
+      /> */}
+      <LightWithHelper/>
       <CameraController 
         ref={cameraRef}
         setView={setView}  
@@ -457,30 +467,139 @@ function Scene({ onOpenChatbot }) {
         url={CV_URL} />
 
       <Suspense fallback={null}>
-        <Trees />
+        <Ship position={[9, -7, 0.5]} rotation={[Math.PI/2, 0, 0]} scale={0.7} />
       </Suspense>
 
-      {/* Herbe instanciée autour du plateau (anneau à l'extérieur des cases et
-          des arbres), animée par un vent sinus. Pas de GLB ni de texture à
-          charger : pas besoin de Suspense, tout le réglage est dans Grass.jsx. */}
-      {/* Comparaison des deux systèmes d'herbe (ils couvrent la MÊME zone
-          annulaire, cf. les deux fichiers) :
-          - 'instanced' → Grass.jsx (option B) : 1 draw call, ~2200 brins
-            individuels fins, vent par brin ;
-          - 'tufts'     → GrassTufts.jsx (option A) : ~60 touffes modélisées
-            clonées, vent par touffe entière ;
-          - 'both'      → les deux superposés (mélange des deux échelles). */}
-      {GRASS_MODE === 'instanced' || GRASS_MODE === 'both' ? <Grass /> : null}
-      {GRASS_MODE === 'tufts' || GRASS_MODE === 'both' ? <GrassTufts /> : null}
+      <Suspense fallback={null}>
+        <Car position={[9, -9, 0.5]} rotation={[Math.PI/2, Math.PI/4, 0]} scale={0.4} />
+      </Suspense>
+      <Suspense fallback={null}>
+        <CaisseCommunaute position={[-2.4, -2.4, 0.96]} rotation={[-Math.PI/2, -Math.PI/4, 0]} dimension={[2.2*1.1, 0.1, 3*1.1]}/>
+      </Suspense>
 
-      {/* Bloom pour l'effet néon du texte « COMING SOON » (DescriptionComingSoon) :
-          le texte émet une luminance très supérieure au reste de la scène, donc
-          lui seul dépasse le seuil et produit le halo. Activé uniquement quand
-          la vue néon est affichée, pour ne pas payer une passe de rendu en plus
-          le reste du temps. */}
-      <EffectComposer enabled={showCaseDetails && focusedCase?.type === 'comingSoon'}>
-        <Bloom mipmapBlur intensity={1.6} luminanceThreshold={0.9} luminanceSmoothing={0.2} />
-      </EffectComposer>
+      <Suspense fallback={null}>
+        <CaisseCommunaute position={[-2.4, -2.4, 1.1]} rotation={[-Math.PI/2, -Math.PI*3/8, 0]} dimension={[2.2*1.1, 0.1, 3*1.1]}/>
+      </Suspense>
+      {/* Effet néon désactivé : le texte « COMING SOON » est désormais un
+          matériau 3D classique (blanc, rugueux), sans émission ni Bloom. */}
+      
+      <Suspense fallback={null}>
+        <B1 position={[-13, 6.5, 0.01]}/>
+      </Suspense>
+      <Suspense fallback={null}>
+        <B1 position={[-13, 6.5, 0.03]} rotation={[-Math.PI/2, Math.PI/16, 0]}/>
+      </Suspense>
+      <Suspense fallback={null}>
+        <B5 position={[-13.2, 3.4, 0.01]} rotation={[-Math.PI/2, 0, 0]}/>
+      </Suspense>
+      <Suspense fallback={null}>
+        <B5 position={[-13.5, 3.2, 0.03]} rotation={[-Math.PI/2, Math.PI/32, 0]}/>
+      </Suspense>
+      <Suspense fallback={null}>
+        <B5 position={[-13.6, 3.1, 0.05]} rotation={[-Math.PI/2, -Math.PI/32, 0]}/>
+      </Suspense>
+
+      <Suspense fallback={null}>
+        <B20 position={[-12.5, 0, 0.01]} rotation={[-Math.PI/2, Math.PI/32, 0]}/>
+      </Suspense>
+      <Suspense fallback={null}>
+        <B100 position={[-18.2, 0.4, 0.01]} rotation={[-Math.PI/2, 0, 0]}/>
+        <B100 position={[-18.5, 0.2, 0.03]} rotation={[-Math.PI/2, Math.PI/32, 0]}/>
+        <B100 position={[-18.6, 0.1, 0.05]} rotation={[-Math.PI/2, -Math.PI/32, 0]}/>
+      </Suspense>
+
+      <Suspense fallback={null}>
+        <AvenueBenevolat position={[-12.5, -4, 0.05]} rotation={[-Math.PI/2, Math.PI/2, 0]}/>
+        <AvenueCuration position={[-12.5, -8, 0.05]} rotation={[-Math.PI/2, Math.PI/2, 0]}/>
+      </Suspense>
+
+      {/* ------------------------------- bas --------------------------------------- */}
+      <Suspense fallback={null}>
+        <B10 position={[-5, -10, 0.01]} rotation={[-Math.PI/2, Math.PI/128, 0]}/>
+        <B10 position={[-5, -10.2, 0.03]} rotation={[-Math.PI/2, Math.PI/128, 0]}/>
+        <B10 position={[-5, -10.4, 0.05]} rotation={[-Math.PI/2, Math.PI/128, 0]}/>
+      </Suspense>
+      
+      <Suspense fallback={null}>
+        <B20 position={[-5, -13, 0.01]} rotation={[-Math.PI/2, Math.PI/128, 0]}/>
+        <B20 position={[-5, -13.2, 0.03]} rotation={[-Math.PI/2, Math.PI/128, 0]}/>
+        <B20 position={[-5, -13.4, 0.05]} rotation={[-Math.PI/2, Math.PI/128, 0]}/>
+      </Suspense>
+
+      <Suspense fallback={null}>
+        <B50 position={[-0, -10, 0.01]} rotation={[-Math.PI/2, Math.PI/128, 0]}/>
+        <B50 position={[-0, -10.2, 0.03]} rotation={[-Math.PI/2, Math.PI/128, 0]}/>
+      </Suspense>
+      
+      <Suspense fallback={null}>
+        <B100 position={[-0, -13, 0.01]} rotation={[-Math.PI/2, Math.PI/128, 0]}/>
+        <B100 position={[-0, -13.2, 0.03]} rotation={[-Math.PI/2, Math.PI/128, 0]}/>
+        <B100 position={[-0, -13.4, 0.05]} rotation={[-Math.PI/2, Math.PI/128, 0]}/>
+        <B100 position={[-0, -13.6, 0.07]} rotation={[-Math.PI/2, Math.PI/128, 0]}/>
+      </Suspense>
+      
+      <Suspense fallback={null}>
+        <AvenueFlappyIa position={[5, -11, 0.05]} rotation={[-Math.PI/2, 0, 0]}/>
+        <AvenueV1Portfolio position={[5, -12.5, 0.1]} rotation={[-Math.PI/2, 0, 0]}/>
+        <AvenueVoxBrige position={[5, -14, 0.15]} rotation={[-Math.PI/2, 0, 0]}/>
+      </Suspense>
+
+      {/* ------------------------------- haut --------------------------------------- */}
+      <Suspense fallback={null}></Suspense>
+      <B500 position={[6, 13.6, 0.07]} rotation={[-Math.PI/2, -Math.PI*3/4, 0]}/>
+      
+      <Suspense fallback={null}>
+        <Chance position={[-3, 11.6, 1.85]} rotation={[0, Math.PI/8,-Math.PI/2]}/>
+        <CaisseCommunaute position={[-1.45, 11.6, 1.85]} rotation={[0, -Math.PI/8,Math.PI/2]}/>
+      </Suspense>
+
+      <Suspense fallback={null}>
+        <Chance position={[-4.45, 11.6, 1.85]} rotation={[0, -Math.PI/8,Math.PI/2]}/>
+        <Chance position={[-5.90, 11.6, 1.85]} rotation={[0, Math.PI/8,-Math.PI/2]}/>
+      </Suspense>
+
+      <Suspense fallback={null}>
+        <CaisseCommunaute position={[-3.65, 11.6, 3.7]} rotation={[-Math.PI/2, Math.PI/2, 0]}/>
+      </Suspense>
+
+      <Suspense fallback={null}>
+        <Chance position={[-3, 11.6, 5.5]} rotation={[0, -Math.PI/8,Math.PI/2]}/>
+        <Chance position={[-4.45, 11.6, 5.5]} rotation={[0, Math.PI/8,-Math.PI/2]}/>
+      </Suspense>
+
+      {/* ------------------------------- Droite --------------------------------------- */}
+      <Suspense fallback={null}>
+      <B1 position={[12, 2, 0.025]} rotation={[-Math.PI/2, Math.PI/128, 0]}/>
+      <B1 position={[12, 4, 0.016]} rotation={[-Math.PI/2, -Math.PI*35/128, 0]}/>
+      <B1 position={[11, 3, 0.021]} rotation={[-Math.PI/2, Math.PI/4, 0]}/></Suspense>
+
+      <Suspense fallback={null}>
+        <B10 position={[13, 1, 0.02]} rotation={[-Math.PI/2, Math.PI/2, 0]}/>
+        <B10 position={[13, 5, 0.03]} rotation={[-Math.PI/2, Math.PI*100/128, 0]}/>
+        <B10 position={[10, 4, 0.01]} rotation={[-Math.PI/2, Math.PI*50/128, 0]}/>
+      </Suspense>
+
+      <Suspense fallback={null}>
+        <B20 position={[13, 0, 0.019]} rotation={[-Math.PI/2, Math.PI/128, 0]}/>
+        <B20 position={[13, -1, 0.017]} rotation={[-Math.PI/2, - Math.PI*86/128, 0]}/>
+        <B20 position={[12, -6, 0.015]} rotation={[-Math.PI/2, Math.PI*3/128, 0]}/>
+      </Suspense>
+
+      <Suspense fallback={null}>
+        <B50 position={[14, 0, 0.035]} rotation={[-Math.PI/2, -Math.PI*39/128, 0]}/>
+        <B50 position={[15, 1, 0.04]} rotation={[-Math.PI/2, -Math.PI*13/128, 0]}/>
+      </Suspense>
+
+      <Suspense fallback={null}>
+        <B100 position={[12, -0, 0.15]} rotation={[-Math.PI/2, Math.PI*68/128, 0]}/>
+        <B100 position={[16, -4, 0.03]} rotation={[-Math.PI/2, -Math.PI*17/128, 0]}/>
+        <B100 position={[12, 3.4, 0.13]} rotation={[-Math.PI/2, Math.PI*108/128, 0]}/>
+      </Suspense>
+
+      <Suspense fallback={null}>
+        <PrisonGithub position={[12, -3.4, 0.13]} rotation={[-Math.PI/2, -Math.PI/2, 0]}/>
+      </Suspense>
+
     </Canvas>
       {/* Flèches de navigation entre cases : overlay HTML posé AU-DESSUS du
           canevas, donc rendu en dehors de <Canvas> (r3f n'accepte que du 3D

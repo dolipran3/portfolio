@@ -1,4 +1,4 @@
-# Portfolio — Eldoliprano (Baptiste Le Bail)
+# Portfolio — Baptiste Le Bail
 
 ## Présentation
 
