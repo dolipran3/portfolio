@@ -45,6 +45,7 @@ export const BILLET = {
 export const MODELE3D = {
   'ship': {glb: '/ship.glb'},
   'car': {glb: '/car.glb'},
+  'dice': {glb: '/dice.glb'}
 }
 
 // Les GLB sont compressés en Draco (décodage géométrie dans des Web Workers

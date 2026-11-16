@@ -1,4 +1,4 @@
-import { useGLTF } from '@react-three/drei';
+import { useGLTF, Clone } from '@react-three/drei';
 import { MODELE3D } from '../case3DAssets';
 
 const assets = MODELE3D['car'];
@@ -7,7 +7,7 @@ export default function Car({ position = [0, 0, 0], rotation = [0, 0, 0], scale 
   const { scene } = useGLTF(assets.glb);
 
   return (
-    <primitive
+    <Clone
       object={scene}
       position={position}
       rotation={rotation}

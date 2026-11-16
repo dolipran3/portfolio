@@ -42,6 +42,7 @@ import Plateau from './case/Plateau';
 
 import Ship from './3DUnique/Ship';
 import Car from './3DUnique/Car';
+import Dice from './3DUnique/Dice';
 
 import B1 from './billets/B1'
 import B5 from './billets/B5'
@@ -59,6 +60,7 @@ import AvenueBenevolat from './billets/AvenueBenevolat';
 import PrisonGithub from './billets/PrisonGithub';
 import CaisseCommunaute from './billets/CaisseCommunaute';
 import Chance from './billets/Chance';
+import { Clone } from '@react-three/drei';
 
 
 
@@ -270,19 +272,7 @@ function Scene({ onOpenChatbot }) {
       {/* Préparation GPU des modèles préchargés (shaders + textures) */}
       <Prewarm3D />
 
-      {/* Lumières */}
-      {/* Math.PI / 2 */}
-
       <ambientLight intensity={0.8} />
-      
-
-      {/* <pointLight 
-        position={[10, 10, 10]} 
-        decay={0.2} 
-        intensity={5} 
-        castShadow={true}
-        
-      /> */}
       <LightWithHelper/>
       <CameraController 
         ref={cameraRef}
@@ -467,12 +457,19 @@ function Scene({ onOpenChatbot }) {
         url={CV_URL} />
 
       <Suspense fallback={null}>
-        <Ship position={[9, -7, 0.5]} rotation={[Math.PI/2, 0, 0]} scale={0.7} />
+        <Ship position={[9, -7, 0]} rotation={[Math.PI/2, 0, 0]} scale={0.7} />
       </Suspense>
 
       <Suspense fallback={null}>
-        <Car position={[9, -9, 0.5]} rotation={[Math.PI/2, Math.PI/4, 0]} scale={0.4} />
+        <Car position={[9, -9, 0]} rotation={[Math.PI/2, Math.PI/4, 0]} scale={0.4} />
       </Suspense>
+
+      <Suspense fallback={null}>
+        <Dice position={[2.6, 3, 1.4]} rotation={[0, 0, Math.PI/8]} scale={0.4} />
+        <Dice position={[3, 1.9, 1.4]} rotation={[0, -Math.PI/2, 0]} scale={0.4} />
+      </Suspense>
+
+
       <Suspense fallback={null}>
         <CaisseCommunaute position={[-2.4, -2.4, 0.96]} rotation={[-Math.PI/2, -Math.PI/4, 0]} dimension={[2.2*1.1, 0.1, 3*1.1]}/>
       </Suspense>
