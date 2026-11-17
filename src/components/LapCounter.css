@@ -1,0 +1,21 @@
+/* Compteur de tours du plateau : badge fixe en haut au milieu de la page,
+   au-dessus du canevas, au même niveau que le tutoriel (z = 45) mais sous
+   le chatbot (z = 50). Non cliquable : les clics doivent traverser vers
+   le plateau / les cases. */
+
+.lap-counter {
+  font-family: 'Semplicita', sans-serif;
+  position: fixed;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 45;
+  padding: 6px 16px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  pointer-events: none;
+  user-select: none;
+}

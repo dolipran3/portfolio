@@ -15,7 +15,7 @@ const CENTER_TARGET = { tx: 0, ty: 0, tz: 0 };
 
 const TWO_PI = Math.PI * 2;
 
-const CameraController = forwardRef(function CameraController({ setView, focusedCase, view, onZoomToCase, onUnfocus, onNavDone, onOpenChatbot, navPhase }, ref) {
+const CameraController = forwardRef(function CameraController({ setView, focusedCase, view, onZoomToCase, onUnfocus, onNavDone, onOpenChatbot, navPhase, onLapChange }, ref) {
   const { camera } = useThree();
 
   // Le "proxy" est l'état animé par GSAP (position + point regardé).
@@ -61,6 +61,14 @@ const CameraController = forwardRef(function CameraController({ setView, focused
   // rotation. Le minuteur est repoussé à chaque impulsion et libère le
   // geste dès que le flux s'arrête.
   const scrollGestureTimer = useRef(null);
+
+  // Compteur de tours complets du plateau : cumul des impulsions de molette
+  // en vue "top" (±π/2 par impulsion). Un tour complet = 2π de rotation
+  // cumulée, dans n'importe quel sens. Seule la rotation déclenchée par la
+  // molette est comptée : les recentrages caméra (focus d'une case, retours)
+  // ne doivent pas faire avancer le compteur.
+  const scrollAngleRef = useRef(0);
+  const lapsRef = useRef(0);
 
   // Retourne l'angle vers lequel il faut aller pour tourner de "from" à "to"
   // en passant par le chemin le plus court (ex. de 350° à 10° => +20°).
@@ -348,6 +356,15 @@ const CameraController = forwardRef(function CameraController({ setView, focused
     const target = targetAngleRef.current + delta;
     targetAngleRef.current = target;
 
+    // Un tour complet du plateau (4 quarts de tour, quel que soit le sens)
+    // est franchi : on prévient la scène avec le nombre de tours effectués.
+    scrollAngleRef.current += delta;
+    const laps = Math.floor(Math.abs(scrollAngleRef.current) / TWO_PI);
+    if (laps > lapsRef.current) {
+      lapsRef.current = laps;
+      onLapChange?.(laps);
+    }
+
     const tl = gsap.timeline();
     currentTween.current = tl;
     tl.to(upAngleProxy.current, {
@@ -358,7 +375,7 @@ const CameraController = forwardRef(function CameraController({ setView, focused
       onUpdate: syncRollFromAngle,
       onComplete: syncRollFromAngle,
     });
-  }, []);
+  }, [onLapChange]);
 
   // La molette ne sert plus à basculer entre les vues "initiale" et "du dessus" :
   // ces transitions se font uniquement par clic. En vue "case", scroller vers le

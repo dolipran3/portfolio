@@ -5,6 +5,7 @@ import CameraController from './CameraController';
 import BoardTitle from './BoardTitle';
 import BoardName from './BoardName';
 import Tutorial from './Tutorial';
+import LapCounter from './LapCounter';
 import { requestImmediatePreload3D, whenCase3DPreloaded } from './case3DAssets';
 import Prewarm3D from './Prewarm3D';
 import useIsMobile from '../hooks/useIsMobile';
@@ -126,6 +127,11 @@ function Scene({ onOpenChatbot }) {
   const [navTransition, setNavTransition] = useState(null);
   const cameraRef = useRef();
   const navTimersRef = useRef([]);
+
+  // Nombre de tours complets du plateau effectués à la molette en vue du
+  // dessus (comptés par CameraController). Sert au compteur affiché à partir
+  // du 2e tour et au basculement de la texture du centre au-delà de 30 tours.
+  const [lapCount, setLapCount] = useState(0);
 
   // Chronomètres de la séquence de navigation : on les annule proprement.
   const clearNavTimers = useCallback(() => {
@@ -300,13 +306,14 @@ function Scene({ onOpenChatbot }) {
         onZoomToCase={handleZoomToCase}
         onUnfocus={handleUnfocus}
         onNavDone={handleNavDone}
-        onOpenChatbot={onOpenChatbot} />
+        onOpenChatbot={onOpenChatbot}
+        onLapChange={setLapCount} />
 
       <Background onClick={handleBackgroundClick} />
       
 
       <Suspense fallback={null}>
-        <Plateau onClick={handleBackgroundClick} />
+        <Plateau onClick={handleBackgroundClick} lapCount={lapCount} />
       </Suspense>
 
       <BoardTitle position={[0, 0, 0.9]} />
@@ -498,7 +505,7 @@ function Scene({ onOpenChatbot }) {
           <ChanceDivice position={[0, 20, 20]} rotation={[Math.PI/4, Math.PI, Math.PI]} dimension={[2.2, 0.1, 3]}/>
           <ChanceDivice position={[20, 0, 20]} rotation={[Math.PI, Math.PI/4, Math.PI/2]} dimension={[2.2, 0.1, 3]}/>
           <ChanceDivice position={[-20, 0, 20]} rotation={[Math.PI, -Math.PI/4, -Math.PI/2]} dimension={[2.2, 0.1, 3]}/>
-          <ChanceDivice position={[0, 0, 13]} rotation={[Math.PI/2, 0, 0]} dimension={[2.2, 0.1, 3]}/>
+          {/* <ChanceDivice position={[0, 0, 13]} rotation={[Math.PI/2, 0, 0]} dimension={[2.2, 0.1, 3]}/> */}
         </Suspense>
       )}
 
@@ -639,6 +646,10 @@ function Scene({ onOpenChatbot }) {
           en arrière et le changement de projet en vue description. Non
           cliquable, posé au-dessus du canevas comme DescriptionNavigator. */}
       <Tutorial view={view} navigating={Boolean(navTransition)} />
+
+      {/* Compteur de tours du plateau : badge en haut au milieu de la page,
+          visible à partir du 2e tour complet effectué à la molette. */}
+      {lapCount >= 2 && <LapCounter laps={lapCount} />}
     </div>
   );
 }
