@@ -40,6 +40,7 @@ export const BILLET = {
   'prisonGithub' :{texture: 'prisonGithub.webp', color: '#ffffff'},
   'caisseCommunaute' :{texture: 'caisseCommunaute.webp', color: '#ffffff'},
   'chance' :{texture: 'chance.webp', color: '#ffffff'},
+  'mobile' :{texture: 'mobile.webp', dos: 'chance.webp'}
 };
 
 export const MODELE3D = {

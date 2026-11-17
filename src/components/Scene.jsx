@@ -7,6 +7,7 @@ import BoardName from './BoardName';
 import Tutorial from './Tutorial';
 import { requestImmediatePreload3D, whenCase3DPreloaded } from './case3DAssets';
 import Prewarm3D from './Prewarm3D';
+import useIsMobile from '../hooks/useIsMobile';
 
 import DescriptionFlappyIa from './DescriptionFlappyIa';
 import DescriptionMemory from './DescriptionMemory';
@@ -60,7 +61,7 @@ import AvenueBenevolat from './billets/AvenueBenevolat';
 import PrisonGithub from './billets/PrisonGithub';
 import CaisseCommunaute from './billets/CaisseCommunaute';
 import Chance from './billets/Chance';
-import { Clone } from '@react-three/drei';
+import ChanceDivice from './billets/ChanceDivice';
 
 
 
@@ -116,6 +117,7 @@ function LightWithHelper() {
 // le Suspense côté scène.
 function Scene({ onOpenChatbot }) {
 
+  const isMobile = useIsMobile();
   const [view, setView] = useState('initial'); // 'initial', 'top' ou 'case'
   const [focusedCase, setFocusedCase] = useState(null); // null ou { position, rotation }
   const [showCaseDetails, setShowCaseDetails] = useState(false);
@@ -143,6 +145,19 @@ function Scene({ onOpenChatbot }) {
   // couvre que le plateau, les cases et leurs textures.
 
   const handleSelect = useCallback((caseData) => {
+    // Sur mobile : les clics ne changent plus les vues du plateau. Seules
+    // les cases de coin restent actives, en ouvrant directement leur
+    // destination (lien externe ou chatbot) sans zoom caméra.
+    if (isMobile) {
+      if (caseData.type === 'corner') {
+        if (caseData.chatbot) {
+          onOpenChatbot?.();
+        } else {
+          window.open(caseData.url ?? 'https://www.google.com', '_blank', 'noopener');
+        }
+      }
+      return;
+    }
     // Déjà en vue "case" : on revient à la vue du dessus au lieu de
     // basculer directement sur la case cliquée.
     if (view === 'case') {
@@ -158,7 +173,7 @@ function Scene({ onOpenChatbot }) {
     setFocusedCase(caseData);
     setShowCaseDetails(false);
     setView('case');
-  }, [view]);
+  }, [view, isMobile, onOpenChatbot]);
 
   // Appelé quand le zoom face à la case (Étape 1) est terminé :
   // à partir de là seulement on peut afficher la description.
@@ -233,6 +248,9 @@ function Scene({ onOpenChatbot }) {
   // - en vue "top" : retour à la vue initiale ;
   // - en vue "initiale" : passage à la vue du dessus.
   const handleBackgroundClick = useCallback(() => {
+    // Sur mobile : aucun changement de vue au clic (plateau, fond, ciel,
+    // clic dans le vide via onPointerMissed).
+    if (isMobile) return;
     if (view === 'case') {
       cameraRef.current?.returnToTop();
       return;
@@ -242,7 +260,7 @@ function Scene({ onOpenChatbot }) {
       return;
     }
     cameraRef.current?.goToTop();
-  }, [view]);
+  }, [view, isMobile]);
 
   return (
     <div>
@@ -472,6 +490,17 @@ function Scene({ onOpenChatbot }) {
       <Suspense fallback={null}>
         <CaisseCommunaute position={[-2.4, -2.4, 0.96]} rotation={[-Math.PI/2, -Math.PI/4, 0]} dimension={[2.2*1.1, 0.1, 3*1.1]}/>
       </Suspense>
+
+      {/* Visible uniquement sur mobile : la carte Chance retournée au clic. */}
+      {isMobile && (
+        <Suspense fallback={null}>
+          <ChanceDivice position={[0, -20, 20]} rotation={[-Math.PI/4, Math.PI, 0]} dimension={[2.2, 0.1, 3]}/>
+          <ChanceDivice position={[0, 20, 20]} rotation={[Math.PI/4, Math.PI, Math.PI]} dimension={[2.2, 0.1, 3]}/>
+          <ChanceDivice position={[20, 0, 20]} rotation={[Math.PI, Math.PI/4, Math.PI/2]} dimension={[2.2, 0.1, 3]}/>
+          <ChanceDivice position={[-20, 0, 20]} rotation={[Math.PI, -Math.PI/4, -Math.PI/2]} dimension={[2.2, 0.1, 3]}/>
+          <ChanceDivice position={[0, 0, 13]} rotation={[Math.PI/2, 0, 0]} dimension={[2.2, 0.1, 3]}/>
+        </Suspense>
+      )}
 
       <Suspense fallback={null}>
         <CaisseCommunaute position={[-2.4, -2.4, 1.1]} rotation={[-Math.PI/2, -Math.PI*3/8, 0]} dimension={[2.2*1.1, 0.1, 3*1.1]}/>
