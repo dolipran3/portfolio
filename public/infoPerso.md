@@ -1,7 +1,7 @@
-Je m'appelle Baptiste Le Bail et j'ai 23 ans.\n
+Je vous présente Baptiste Le Bail, 23 ans.\n
 
-Je viens de finir mes études en Ingénieur/maîtrise en informatique et réseau avec une spécialisation dans l'intelligence artificielle.\n
+Il vient de terminer ses études d’ingénieur en informatique et réseaux, avec une spécialisation en intelligence artificielle.\n
 
-Durant ce cursus, j'ai fait deux ans de cours généraux et trois ans en alternance avec plusieurs projets différents qui sont présents dans ce portfolio.\n
+Après deux années de formation générale, il a poursuivi son cursus pendant trois ans en alternance, au cours desquels il a réalisé plusieurs projets. Vous pouvez les découvrir en cliquant sur les éléments de son portfolio.\n
 
-Je vous laisse les découvrir en cliquant dessus et à me poser des questions pour plus d'informations sur ces projets.\n
+N’hésitez pas à me poser vos questions pour en savoir plus sur ses réalisations.\n

@@ -17,3 +17,7 @@ Un assistant conversationnel (chatbot) répond aux questions sur le portfolio et
 ## Technologies
 
 React 19, react-three-fiber, drei, Three.js, GSAP, Tailwind CSS, Vite. Les modèles 3D au format GLB (compression Draco) sont optimisés pour le web.
+
+
+## Informations diverses sur Baptiste Le Bail
+Voici quelques informations en vrac qui peuvent être utiles pour vous aider à comprendre qui est Baptiste. Il aime le sport, il fait de la boxe thaïlandaise. Il aime aussi les sports de glisse, aime les jeux vidéo et aime les voyages. Il a fait plusieurs actions de bénévolat au cours de ces dernières années, une à l'école et plusieurs à l'extérieur. Il a fait cinq ans d'études dans l'informatique avec une spécialisation dans l'intelligence artificielle.
