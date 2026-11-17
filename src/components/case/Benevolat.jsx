@@ -24,6 +24,7 @@ export function Benevolat({ position, rotation = [0, 0, 0], view, onSelect}) {
       position={position}
       rotation={rotation}
       castShadow
+      receiveShadow
       onPointerOver={() => {
         setHovered(true);
         // télécharge le modèle 3D de la description en anticipation du clic

@@ -24,6 +24,7 @@ export function FlappyIaCase({ position, rotation = [0, 0, 0], view, onSelect}) 
       ref={meshRef}
       position={position}
       castShadow
+      receiveShadow
       onPointerOver={() => {
         setHovered(true);
         // télécharge le modèle 3D de la description en anticipation du clic

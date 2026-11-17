@@ -25,6 +25,7 @@ export function CurationCase({ position, rotation = [0, 0, 0], view, onSelect}) 
       position={position}
       rotation={rotation}
       castShadow
+      receiveShadow
       onPointerOver={() => {
         setHovered(true);
         preloadCase3D('curation');

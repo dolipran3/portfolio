@@ -24,6 +24,7 @@ export function ComingSoonCase({ position, rotation = [0, 0, 0], view, onSelect}
       position={position}
       rotation={rotation}
       castShadow
+      receiveShadow
       onPointerOver={() => setHovered(true)}
       onPointerOut={() => setHovered(false)}
       onClick={(e) => {

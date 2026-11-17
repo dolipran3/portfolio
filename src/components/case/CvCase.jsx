@@ -27,6 +27,7 @@ export function CvCase({ position, rotation = [0, 0, 0], view, onSelect, url }) 
       ref={meshRef}
       position={position}
       castShadow
+      receiveShadow
       onPointerOver={() => setHovered(true)}
       onPointerOut={() => setHovered(false)}
       onClick={(e) => {

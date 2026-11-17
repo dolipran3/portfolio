@@ -28,6 +28,7 @@ export function StartCase({ position, rotation = [0, 0, 0], view, onSelect }) {
       ref={meshRef}
       position={position}
       castShadow
+      receiveShadow
       onPointerOver={() => setHovered(true)}
       onPointerOut={() => setHovered(false)}
       onClick={(e) => {
