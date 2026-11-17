@@ -50,6 +50,19 @@
   filter: brightness(0) invert(1) drop-shadow(2px 3px 6px rgba(0, 0, 0, 0.45));
 }
 
+/* Étape scroll : souris à chevrons descendants (GIF 200x150 détouré),
+   affichée entière dans le flux. Les chevrons s'arrêtent à ~81 % de la
+   hauteur de l'image : on remonte ce vide pour que l'étiquette frôle les
+   chevrons au lieu d'en être séparée par le fond transparent. */
+.tutorial-scroll {
+  width: 100px;
+  height: 72px;
+  margin-left: -25%;
+  user-select: none;
+  /* même traitement que la main : trait noir -> tout blanc, alpha conservé */
+  filter: brightness(0) invert(1) drop-shadow(2px 3px 6px rgba(0, 0, 0, 0.45));
+}
+
 /* Étiquette explicative sous chaque guide. Pour les étapes « doigt »
    (plate / case), l'ancrage étant la cible exacte (taille 0), l'étiquette
    est positionnée en absolu, centrée sous la pointe du doigt (la main
@@ -134,6 +147,12 @@
   transform: translate(-50%, 0);
 }
 
+.hint-scroll {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, 0);
+}
+
 /* Vue projet : le bas de l'écran est en dehors de la description (cliquer
    là revient en arrière) ; la flèche courbe glisse vers cette zone. */
 .hint-back {
@@ -147,7 +166,7 @@
    position suit le redimensionnement de la flèche. */
 .hint-nav {
   right: calc(var(--ui-edge) + var(--ui-arrow-w) + clamp(24px, 2.6vw, 36px));
-  top: 50%;
+  top: 55%;
   transform: translate(0, -140%);
   flex-direction: row;
   align-items: center;
